@@ -2,6 +2,7 @@ import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
 import { Gamba } from '../target/types/gamba';
 import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { assert } from 'chai';
 
 
 
@@ -44,6 +45,13 @@ describe('gamba', () => {
       },
     });
 
+    const state = await program.account.userAccount.fetch(_user_account_pda);
+
     console.log("Your transaction signature", tx);
+    console.log("state: ", state);
+
+    assert.equal(state.userName, "bobby tables");
+
+
   });
 });
