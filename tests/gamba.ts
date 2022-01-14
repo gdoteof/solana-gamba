@@ -8,7 +8,6 @@ import { assert } from 'chai';
 
 describe('gamba', () => {
 
-  // Configure the client to use the local cluster.
   anchor.setProvider(anchor.Provider.env());
   const provider = anchor.Provider.local();
   const providerWallet = provider.wallet;
@@ -16,8 +15,31 @@ describe('gamba', () => {
 
   const program = anchor.workspace.Gamba as Program<Gamba>;
 
-  it('It initializes', async () => {
-    // Add your test here.
+  it('gamba initializes', async () => {
+    const userAccount = anchor.web3.Keypair.generate();
+
+    const [_gamba_pda, _gamba_bump] = await PublicKey.findProgramAddress(
+      [ providerWallet.publicKey.encode().reverse(),
+        Buffer.from(anchor.utils.bytes.utf8.encode("gamba"))],
+      program.programId
+    );
+
+    const tx = await program.rpc.initializeGamba(
+      _gamba_bump , 
+      providerWallet.publicKey, { 
+        accounts: {
+          gambaAccount: _gamba_pda,
+          authority: providerWallet.publicKey,
+          systemProgram: SystemProgram.programId,
+      },
+    });
+
+    const state = await program.account.gambaAccount.fetch(_gamba_pda);
+
+    assert(state.authority.equals(providerWallet.publicKey))
+  });
+
+  it('user initializes', async () => {
     const userAccount = anchor.web3.Keypair.generate();
 
     const [_user_account_pda, _user_account_bump] = await PublicKey.findProgramAddress(
@@ -26,31 +48,24 @@ describe('gamba', () => {
       program.programId
     );
 
-    console.log("program id", program.programId.toString());
-    console.log("user account pda:", _user_account_pda.toString());
-    console.log("user account bump:", _user_account_bump.toString());
-    console.log("authority publicid", providerWallet.publicKey.toString());
-    console.log("public key encode", providerWallet.publicKey.encode());
-    console.log(anchor.utils.bytes.utf8.encode("user_account"));
-
-
-
-
-
-      const tx = await program.rpc.initialize(_user_account_bump, "bobby tables", {
-      accounts: {
-        userAccount: _user_account_pda,
-        authority: providerWallet.publicKey,
-        systemProgram: SystemProgram.programId,
+    const tx = await program.rpc.initializeUser(
+      _user_account_bump, 
+      "bobby tables", 
+      providerWallet.publicKey,
+      { 
+        accounts: {
+          userAccount: _user_account_pda,
+          authority: providerWallet.publicKey,
+          systemProgram: SystemProgram.programId,
       },
     });
 
+
     const state = await program.account.userAccount.fetch(_user_account_pda);
 
-    console.log("Your transaction signature", tx);
-    console.log("state: ", state);
-
     assert.equal(state.userName, "bobby tables");
+    assert(state.authority.equals(providerWallet.publicKey))
+
 
 
   });
