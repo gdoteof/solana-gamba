@@ -10,12 +10,12 @@ pub struct InitializeEpoch<'info> {
         payer = authority,
         seeds = [&epoch.to_le_bytes(), b"epoch_account".as_ref()], 
         bump = bump,
-        space = 8 + 16 + 200
+        space = 8 + 16 + 200,
     )]
-    pub epoch_account: Account<'info, EpochAccount>,
+    pub epoch_account: AccountLoader<'info, EpochAccount>,
 
     #[account(mut, has_one=authority)]
-    pub gamba_account: Account<'info, GambaAccount>,
+    pub gamba_account: AccountLoader<'info, GambaAccount>,
 
     pub authority: Signer<'info>,
 
@@ -23,8 +23,8 @@ pub struct InitializeEpoch<'info> {
 }
 
 pub fn handler(ctx: Context<InitializeEpoch>, _bump: u8, epoch: u32) -> ProgramResult {
-    let gamba_account = &mut ctx.accounts.gamba_account;
-    let epoch_account = &mut ctx.accounts.epoch_account;
+    let mut gamba_account = ctx.accounts.gamba_account.load_init()?;
+    let mut epoch_account = ctx.accounts.epoch_account.load_init()?;
 
     if gamba_account.current_open_epoch + 1 != epoch {
         return Err(ErrorCode::BadEpoch.into());
@@ -33,7 +33,6 @@ pub fn handler(ctx: Context<InitializeEpoch>, _bump: u8, epoch: u32) -> ProgramR
     gamba_account.current_open_epoch = epoch;
     epoch_account.epoch = epoch;
     epoch_account.authority = gamba_account.authority;
-    epoch_account.bets = Vec::new();
     epoch_account.num_bets = 0;
     epoch_account.max_bets = 8;
 

@@ -1,4 +1,4 @@
-use anchor_lang::prelude::*;
+use anchor_lang::{prelude::*};
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -11,7 +11,7 @@ pub struct InitializeGamba<'info> {
         bump = _bump,
         space = 8 + 16 + 200
     )]
-    pub gamba_account: Account<'info, GambaAccount>,
+    pub gamba_account: AccountLoader<'info, GambaAccount>,
 
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -20,7 +20,7 @@ pub struct InitializeGamba<'info> {
 }
 
 pub fn handler(ctx: Context<InitializeGamba>, _bump: u8, authority : Pubkey) -> ProgramResult {
-    let gamba_account = &mut ctx.accounts.gamba_account;
+    let mut gamba_account = ctx.accounts.gamba_account.load_init()?;
     gamba_account.current_open_epoch = 1;
     gamba_account.latest_closed_epoch = 0;
     gamba_account.authority = authority;

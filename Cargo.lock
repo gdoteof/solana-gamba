@@ -983,6 +983,7 @@ name = "gamba"
 version = "0.1.0"
 dependencies = [
  "anchor-lang",
+ "bytemuck",
  "solana-program",
  "solana-program-test",
 ]
