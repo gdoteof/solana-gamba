@@ -1,0 +1,28 @@
+use anchor_lang::prelude::*;
+use crate::state::*;
+
+#[derive(Accounts)]
+#[instruction(_bump: u8)]
+pub struct InitializeGamba<'info> {
+    #[
+        account(init, 
+        payer = authority,
+        seeds = [authority.key.as_ref(), b"gamba".as_ref()], 
+        bump = _bump,
+        space = 8 + 16 + 200
+    )]
+    pub gamba_account: Account<'info, GambaAccount>,
+
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    pub system_program: Program<'info, System>
+}
+
+pub fn handler(ctx: Context<InitializeGamba>, _bump: u8, authority : Pubkey) -> ProgramResult {
+    let gamba_account = &mut ctx.accounts.gamba_account;
+    gamba_account.current_open_epoch = 1;
+    gamba_account.latest_closed_epoch = 0;
+    gamba_account.authority = authority;
+    Ok(())
+}
