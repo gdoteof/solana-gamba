@@ -1,7 +1,12 @@
 use anchor_lang::{prelude::*};
+
+extern crate static_assertions;
+
+
 pub mod errors;
 pub mod instructions;
 pub mod state;
+pub mod utils;
 
 use errors::ErrorCode;
 use instructions::*;

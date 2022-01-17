@@ -18,6 +18,8 @@ default = []
 [dependencies]
 anchor-lang = "0.20.0"
 bytemuck = "1.7.3"
+static_assertions = "1.1.0"
+jet-proc-macros = { version = "1", package = "jet-proto-proc-macros" }
 
 
 [dev-dependencies]
