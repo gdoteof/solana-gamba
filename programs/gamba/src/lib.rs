@@ -38,7 +38,6 @@ mod tests {
     use solana_program::pubkey::Pubkey;
 
 
-    use super::*;
     #[test]
     fn dump_user_pdas() {
 

@@ -84,7 +84,7 @@ pub enum BetChoice {
 #[derive(Pod, Zeroable, Clone, Copy)]
 #[repr(C)]
 pub struct BetInfo {
-    /// The related reserve account
+    /// The related user account
     pub user: StoredPubkey, //32
 
     pub lamports: u32, //4
@@ -100,8 +100,7 @@ pub struct BetInfo {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use bytemuck::Zeroable;
+    use super::BetInfo;
 
     #[test]
     fn bet_info_size() {
