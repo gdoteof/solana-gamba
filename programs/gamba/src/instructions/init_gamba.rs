@@ -7,7 +7,7 @@ pub struct InitializeGamba<'info> {
     #[
         account(init, 
         payer = authority,
-        seeds = [authority.key.as_ref(), b"gamba".as_ref()], 
+        seeds = [b"gamba".as_ref()], 
         bump = _bump,
         space = 8 + 16 + 200
     )]
