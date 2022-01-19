@@ -17,8 +17,8 @@ declare_id!("HaSj7pdndQD9DepFmPrcyL7exQ1BDUfr1qG4Uaxypfa9");
 #[program]
 pub mod gamba {
     use super::*;
-    pub fn initialize_user(ctx: Context<InitializeUserAccount>, bump: u8,  user_name: String, authority : Pubkey) -> ProgramResult {
-        instructions::init_user::handler(ctx, bump, user_name, authority)
+    pub fn initialize_user(ctx: Context<InitializeUserAccount>, gamba_bump: u8, user_bump: u8, user_name: String, authority : Pubkey) -> ProgramResult {
+        instructions::init_user::handler(ctx, gamba_bump, user_bump, user_name, authority)
     }
 
     pub fn initialize_gamba(ctx: Context<InitializeGamba>, bump: u8, authority : Pubkey) -> ProgramResult {

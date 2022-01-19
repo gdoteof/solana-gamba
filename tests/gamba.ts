@@ -1,8 +1,10 @@
 import * as anchor from '@project-serum/anchor';
 import { Program } from '@project-serum/anchor';
 import { Gamba } from '../target/types/gamba';
-import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { PublicKey, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { assert } from 'chai';
+import { Wallet } from '@project-serum/anchor/dist/cjs/provider';
+import {GambaUtils} from './utils/gamba_utils'
 
 
 
@@ -10,28 +12,15 @@ describe('gamba', () => {
 
   anchor.setProvider(anchor.Provider.env());
   const provider = anchor.Provider.local();
-  const providerWallet = provider.wallet;
+  const providerWallet : Wallet = provider.wallet;
 
 
   const program = anchor.workspace.Gamba as Program<Gamba>;
 
   it('gamba initializes', async () => {
-    const userAccount = anchor.web3.Keypair.generate();
+    const gamba = new GambaUtils(provider.connection, providerWallet, program, true);
 
-    const [_gamba_pda, _gamba_bump] = await PublicKey.findProgramAddress(
-      [ Buffer.from(anchor.utils.bytes.utf8.encode("gamba"))],
-      program.programId
-    );
-
-    const tx = await program.rpc.initializeGamba(
-      _gamba_bump , 
-      providerWallet.publicKey, { 
-        accounts: {
-          gambaAccount: _gamba_pda,
-          authority: providerWallet.publicKey,
-          systemProgram: SystemProgram.programId,
-      },
-    });
+    const [_gamba_pda, _gamba_bump] = await  gamba.init_gamba();
 
     const state = await program.account.gambaAccount.fetch(_gamba_pda);
 
@@ -40,29 +29,25 @@ describe('gamba', () => {
 
   it('user initializes', async () => {
     const userAccount = anchor.web3.Keypair.generate();
+    const gamba = new GambaUtils(provider.connection, providerWallet, program, true);
+    const airdropTxnId = await provider.connection.requestAirdrop(userAccount.publicKey, LAMPORTS_PER_SOL/10);
+    console.log("airdrop tx:", airdropTxnId);
 
-    const [_user_account_pda, _user_account_bump] = await PublicKey.findProgramAddress(
-      [ providerWallet.publicKey.encode().reverse(),
-        Buffer.from(anchor.utils.bytes.utf8.encode("user_account"))],
-      program.programId
-    );
+    var bal = 0;
 
-    const tx = await program.rpc.initializeUser(
-      _user_account_bump, 
-      "bobby tables", 
-      providerWallet.publicKey,
-      { 
-        accounts: {
-          userAccount: _user_account_pda,
-          authority: providerWallet.publicKey,
-          systemProgram: SystemProgram.programId,
-      },
-    });
+    while (bal == 0) {
+      bal = await provider.connection.getBalance(userAccount.publicKey);
+      await new Promise(resolve => setTimeout(resolve,1000));
+      console.log("sleeping 1 second")
+    }
+    console.log("bal is: ", bal)
+
+    const [_user_account_pda, _user_account_bump] = await gamba.init_user(userAccount, "bobby tables");
 
     const state = await program.account.userAccount.fetch(_user_account_pda);
 
     assert.equal(state.userName, "bobby tables");
-    assert(state.authority.equals(providerWallet.publicKey))
+    assert(state.authority.equals(userAccount.publicKey))
   });
 
   it('epoch initializes', async () => {
@@ -75,7 +60,6 @@ describe('gamba', () => {
     assert.equal(gamba_state.currentOpenEpoch, 0);
 
     const next_epoch = gamba_state.currentOpenEpoch + 1;
-    const userAccount = anchor.web3.Keypair.generate();
 
     const [_epoch_account_pda, _epoch_account_bump] = await PublicKey.findProgramAddress(
       [ Buffer.from(new Int32Array([next_epoch]).buffer),
