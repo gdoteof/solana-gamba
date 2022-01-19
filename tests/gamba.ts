@@ -19,8 +19,7 @@ describe('gamba', () => {
     const userAccount = anchor.web3.Keypair.generate();
 
     const [_gamba_pda, _gamba_bump] = await PublicKey.findProgramAddress(
-      [ providerWallet.publicKey.encode().reverse(),
-        Buffer.from(anchor.utils.bytes.utf8.encode("gamba"))],
+      [ Buffer.from(anchor.utils.bytes.utf8.encode("gamba"))],
       program.programId
     );
 

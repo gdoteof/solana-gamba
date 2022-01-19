@@ -2,7 +2,7 @@ use anchor_lang::{prelude::*};
 use bytemuck::{Pod, Zeroable, Contiguous};
 use jet_proc_macros::assert_size;
 
-use crate::{utils::{FixedBuf, StoredPubkey}, errors::ErrorCode};
+use crate::{utils::{FixedBuf, StoredPubkey}};
 
 
 #[account(zero_copy)]

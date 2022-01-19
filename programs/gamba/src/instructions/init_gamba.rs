@@ -9,7 +9,7 @@ pub struct InitializeGamba<'info> {
         payer = authority,
         seeds = [b"gamba".as_ref()], 
         bump = _bump,
-        space = 8 + 16 + 200
+        space = 8 + 40
     )]
     pub gamba_account: AccountLoader<'info, GambaAccount>,
 
