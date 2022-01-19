@@ -6,15 +6,16 @@ use crate::{errors::ErrorCode};
 
 use super::{BetInfo, BetType, BetChoice};
 
+pub const MAX_BETS: i8 = 32;
 
-
+#[assert_size(4140)]
 #[account(zero_copy)]
 pub struct EpochAccount {
     pub epoch: u32,
-    pub num_bets: u8,
-    pub max_bets: u8,
+    pub num_bets: u32,
+    pub max_bets: u32,
     pub authority: Pubkey,
-    pub bets: [u8; 1200]
+    pub bets: [u8; 4096]
 }
 
 impl EpochAccount {
@@ -31,7 +32,7 @@ impl EpochAccount {
 #[derive(Pod, Zeroable, Clone, Copy)]
 #[repr(C)]
 pub struct EpochBets {
-    bet_info: [BetInfo; 32],
+    bet_info: [BetInfo; MAX_BETS as usize],
 }
 
 pub type BetIndex = u16;

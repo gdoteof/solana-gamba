@@ -25,8 +25,8 @@ pub mod gamba {
         instructions::init_gamba::handler(ctx, bump, authority)
     }
 
-    pub fn initialize_epoch(ctx: Context<InitializeEpoch>, bump: u8, epoch: u32) -> ProgramResult {
-        instructions::init_epoch::handler(ctx, bump, epoch)
+    pub fn initialize_epoch(ctx: Context<InitializeEpoch>, epoch: u32, epoch_bump: u8, gamba_bump: u8) -> ProgramResult {
+        instructions::init_epoch::handler(ctx,epoch, epoch_bump, gamba_bump)
     }
 }
 

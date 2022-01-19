@@ -21,7 +21,7 @@ pub struct InitializeGamba<'info> {
 
 pub fn handler(ctx: Context<InitializeGamba>, _bump: u8, authority : Pubkey) -> ProgramResult {
     let mut gamba_account = ctx.accounts.gamba_account.load_init()?;
-    gamba_account.current_open_epoch = 1;
+    gamba_account.current_open_epoch = 0;
     gamba_account.latest_closed_epoch = 0;
     gamba_account.authority = authority;
     Ok(())
