@@ -18,19 +18,19 @@ use crate::borsh::{BorshDeserialize,BorshSerialize};
 #[program]
 pub mod gamba {
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
-#[repr(C)]
-pub enum BetType {
-    TwoFold,
-    TenFold,
-}
+    #[derive(Debug, Clone, Copy, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
+    #[repr(C)]
+    pub enum BetType {
+        TwoFold,
+        TenFold,
+    }
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
-#[repr(u32)]
-pub enum BetChoice {
-    Low,
-    High,
-}
+    #[derive(Debug, Clone, Copy, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
+    #[repr(u32)]
+    pub enum BetChoice {
+        Low,
+        High,
+    }
 
 #[account]
 pub struct BetAccount {
