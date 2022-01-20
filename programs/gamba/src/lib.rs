@@ -15,28 +15,28 @@ declare_id!("HaSj7pdndQD9DepFmPrcyL7exQ1BDUfr1qG4Uaxypfa9");
 
 use crate::borsh::{BorshDeserialize,BorshSerialize};
 
+#[derive(Debug, Clone, Copy, Eq, PartialEq, AnchorDeserialize, AnchorSerialize)]
+pub enum BetType {
+    TwoFold,
+    TenFold,
+}
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq, AnchorDeserialize, AnchorSerialize)]
+pub enum BetChoice {
+    Low,
+    High,
+}
+
+#[account]
+pub struct BetAccount {
+    pub user: Pubkey,
+    pub bet_type: BetType,
+    pub bet_choice: BetChoice,
+    pub lamports: u32
+}
+
 #[program]
 pub mod gamba {
-
-    #[derive(Debug, Clone, Copy, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
-    pub enum BetType {
-        TwoFold,
-        TenFold,
-    }
-
-    #[derive(Debug, Clone, Copy, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
-    pub enum BetChoice {
-        Low,
-        High,
-    }
-
-    #[account]
-    pub struct BetAccount {
-        pub user: Pubkey,
-        pub bet_type: BetType,
-        pub bet_choice: BetChoice,
-        pub lamports: u32
-    }
 
 
     use super::*;
