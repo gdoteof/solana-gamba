@@ -30,13 +30,13 @@ pub mod gamba {
         High,
     }
 
-#[account]
-pub struct BetAccount {
-    pub user: Pubkey,
-    pub bet_type: BetType,
-    pub bet_choice: BetChoice,
-    pub lamports: u32
-}
+    #[account]
+    pub struct BetAccount {
+        pub user: Pubkey,
+        pub bet_type: BetType,
+        pub bet_choice: BetChoice,
+        pub lamports: u32
+    }
 
 
     use super::*;
