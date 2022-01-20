@@ -12,11 +12,33 @@ use errors::ErrorCode;
 use instructions::*;
 
 declare_id!("HaSj7pdndQD9DepFmPrcyL7exQ1BDUfr1qG4Uaxypfa9");
-use crate::state::{BetType, BetChoice};
 
+use crate::borsh::{BorshDeserialize,BorshSerialize};
 
 #[program]
 pub mod gamba {
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
+#[repr(C)]
+pub enum BetType {
+    TwoFold,
+    TenFold,
+}
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
+#[repr(u32)]
+pub enum BetChoice {
+    Low,
+    High,
+}
+
+#[account]
+pub struct BetAccount {
+    pub user: Pubkey,
+    pub bet_type: BetType,
+    pub bet_choice: BetChoice,
+    pub lamports: u32
+}
 
 
     use super::*;
