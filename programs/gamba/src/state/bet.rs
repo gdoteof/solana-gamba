@@ -1,8 +1,17 @@
 use anchor_lang::{prelude::*};
 
-use crate::{BetType, BetChoice};
 
+#[derive(Debug, Clone, Copy, Eq, PartialEq, AnchorDeserialize, AnchorSerialize)]
+pub enum BetType {
+    TwoFold,
+    TenFold,
+}
 
+#[derive(Debug, Clone, Copy, Eq, PartialEq, AnchorDeserialize, AnchorSerialize)]
+pub enum BetChoice {
+    Low,
+    High,
+}
 
 #[account]
 pub struct BetAccount {

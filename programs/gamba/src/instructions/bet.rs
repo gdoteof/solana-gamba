@@ -1,8 +1,7 @@
 use anchor_lang::{prelude::*};
-use crate::state::{GambaAccount, EpochAccount, BetAccount};
+use crate::state::{GambaAccount, EpochAccount, BetAccount, BetType, BetChoice};
 use crate::{errors::ErrorCode};
 
-use crate::{BetType,  BetChoice};
 
 #[derive(Accounts)]
 #[instruction(bet_bump: u8, gamba_bump: u8, epoch_bump: u8, epoch: u32)]

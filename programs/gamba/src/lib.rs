@@ -11,21 +11,13 @@ pub mod utils;
 use errors::ErrorCode;
 use instructions::*;
 
+use state::*;
+
 
 declare_id!("HaSj7pdndQD9DepFmPrcyL7exQ1BDUfr1qG4Uaxypfa9");
 
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, AnchorDeserialize, AnchorSerialize)]
-pub enum BetType {
-    TwoFold,
-    TenFold,
-}
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, AnchorDeserialize, AnchorSerialize)]
-pub enum BetChoice {
-    Low,
-    High,
-}
 
 #[program]
 pub mod gamba {
