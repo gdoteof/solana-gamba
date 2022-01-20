@@ -1,5 +1,4 @@
 use anchor_lang::{prelude::*};
-use bytemuck::Contiguous;
 use crate::{state::*, errors::ErrorCode};
 
 #[derive(Accounts)]
@@ -9,7 +8,7 @@ pub struct MakeBet<'info> {
         seeds = [user.key.as_ref(), b"bet".as_ref()], 
         bump = bet_bump,
         payer = user, space = 8 + 12)]
-    pub bet_account: AccountLoader<'info, BetAccount>,
+    pub bet_account: Account<'info, BetAccount>,
 
     #[
         account(
@@ -33,10 +32,10 @@ pub struct MakeBet<'info> {
 
 }
 
-pub fn handler(ctx: Context<MakeBet>, _bump: u8, epoch: u32, user: Pubkey, lamports: u32, 
-bet_type: BetType, bet_choice: BetChoice) -> ProgramResult {
+pub fn handler(ctx: Context<MakeBet>, _bet_bump: u8, _gamba_bump:u8, _epoch_bump: u8, epoch: u32, user: Pubkey, bet_type: BetType, bet_choice: BetChoice, lamports: u32) -> ProgramResult {
     let gamba_account = ctx.accounts.gamba_account.load()?;
-    let mut bet_account = ctx.accounts.bet_account.load_init()?;
+    let bet_account = &mut ctx.accounts.bet_account;
+
     let mut epoch_account = ctx.accounts.epoch_account.load_mut()?;
 
     if gamba_account.current_open_epoch + 1 != epoch {
@@ -45,10 +44,10 @@ bet_type: BetType, bet_choice: BetChoice) -> ProgramResult {
 
     bet_account.user = user;
     bet_account.lamports = lamports;
-    bet_account.bet_type = bet_type.into_integer();
-    bet_account.bet_choice = bet_choice.into_integer();
+    bet_account.bet_type = bet_type;
+    bet_account.bet_choice = bet_choice;
 
-    epoch_account.bets_mut().register(&user, lamports, bet_type, bet_choice)?;
+    epoch_account.bets_mut().register(&ctx.accounts.bet_account.key())?;
 
     Ok(())
 }

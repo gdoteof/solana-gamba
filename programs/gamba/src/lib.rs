@@ -12,10 +12,13 @@ use errors::ErrorCode;
 use instructions::*;
 
 declare_id!("HaSj7pdndQD9DepFmPrcyL7exQ1BDUfr1qG4Uaxypfa9");
+use crate::state::{BetType, BetChoice};
 
 
 #[program]
 pub mod gamba {
+
+
     use super::*;
     pub fn initialize_user(ctx: Context<InitializeUserAccount>, gamba_bump: u8, user_bump: u8, user_name: String, authority : Pubkey) -> ProgramResult {
         instructions::init_user::handler(ctx, gamba_bump, user_bump, user_name, authority)
@@ -28,6 +31,11 @@ pub mod gamba {
     pub fn initialize_epoch(ctx: Context<InitializeEpoch>, epoch: u32, epoch_bump: u8, gamba_bump: u8) -> ProgramResult {
         instructions::init_epoch::handler(ctx,epoch, epoch_bump, gamba_bump)
     }
+
+    pub fn bet(ctx: Context<MakeBet>, bet_bump: u8, gamba_bump:u8, epoch_bump: u8, epoch: u32, user: Pubkey, bet_type: BetType, bet_choice: BetChoice, lamports: u32) -> ProgramResult {
+        instructions::bet::handler(ctx, bet_bump, gamba_bump, epoch_bump, epoch, user, bet_type, bet_choice, lamports)
+    }
+
 }
 
 

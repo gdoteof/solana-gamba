@@ -31,6 +31,7 @@ impl From<StoredPubkey> for Pubkey {
     }
 }
 
+
 impl From<Pubkey> for StoredPubkey {
     fn from(key: Pubkey) -> Self {
         Self(key)
