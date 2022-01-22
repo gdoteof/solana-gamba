@@ -4,7 +4,7 @@ use bytemuck::{Pod, Zeroable};
 
 use crate::{errors::ErrorCode, utils::StoredPubkey};
 
-pub const MAX_BETS: i8 = 32;
+pub const MAX_BETS: u8 = 128;
 
 #[assert_size(4140)]
 #[account(zero_copy)]
@@ -26,7 +26,7 @@ impl EpochAccount {
     }
 }
 
-#[assert_size(aligns, 1024)]
+#[assert_size(aligns, 4096)]
 #[derive(Pod, Zeroable, Clone, Copy)]
 #[repr(C)]
 pub struct EpochBets {

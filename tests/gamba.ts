@@ -4,18 +4,18 @@ import { Gamba } from '../target/types/gamba';
 import { PublicKey, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { assert } from 'chai';
 import { Wallet } from '@project-serum/anchor/dist/cjs/provider';
-import {GambaUtils} from './utils/gamba_utils'
+import {BetType, BetChoice, GambaUtils, from_anchor} from './utils/gamba_utils';
 
 
 
 describe('gamba', () => {
 
-  anchor.setProvider(anchor.Provider.env());
   const provider = anchor.Provider.local();
   const providerWallet : Wallet = provider.wallet;
 
 
   const program = anchor.workspace.Gamba as Program<Gamba>;
+
 
   it('gamba initializes', async () => {
     const gamba = new GambaUtils(provider.connection, providerWallet, program, true);
@@ -30,18 +30,8 @@ describe('gamba', () => {
   it('user initializes', async () => {
     const userAccount = anchor.web3.Keypair.generate();
     const gamba = new GambaUtils(provider.connection, providerWallet, program, true);
-    const airdropTxnId = await provider.connection.requestAirdrop(userAccount.publicKey, LAMPORTS_PER_SOL/10);
-    console.log("airdrop tx:", airdropTxnId);
 
-    var bal = 0;
-
-    while (bal == 0) {
-      bal = await provider.connection.getBalance(userAccount.publicKey);
-      await new Promise(resolve => setTimeout(resolve,1000));
-      console.log("sleeping 1 second")
-    }
-    console.log("bal is: ", bal)
-
+    const _bal = await gamba.request_air_drop(userAccount.publicKey, LAMPORTS_PER_SOL/10);
     const [_user_account_pda, _user_account_bump] = await gamba.init_user(userAccount, "bobby tables");
 
     const state = await program.account.userAccount.fetch(_user_account_pda);
@@ -84,12 +74,29 @@ describe('gamba', () => {
     assert(epoch_state.authority.equals(providerWallet.publicKey));
 
     assert.equal(epoch_state.epoch, next_epoch);
-    assert.equal(epoch_state.maxBets, 32);
+    assert.equal(epoch_state.maxBets, 128);
     assert.equal(epoch_state.numBets, 0);
 
     const gamba_state_after = await program.account.gambaAccount.fetch(_gamba_pda);
     assert.equal(gamba_state_after.currentOpenEpoch, next_epoch);
 
   });
+
+  it('can make a bet', async () => {
+    const userAccount = anchor.web3.Keypair.generate();
+    const gamba = new GambaUtils(provider.connection, providerWallet, program, true);
+    let bet_type: BetType = "twoFold";
+    let bet_choice: BetChoice = "low";
+
+    const _bal = await gamba.request_air_drop(userAccount.publicKey, LAMPORTS_PER_SOL/10);
+
+    const [bet_pda, _bet_bump] = await gamba.make_bet(userAccount, 42069, bet_type , bet_choice, 1);
+    const bet_state = await program.account.betAccount.fetch(bet_pda);
+    assert.equal(42069, bet_state.lamports);
+
+    assert.equal(bet_type, from_anchor<BetType>(bet_state.betType));
+    assert.equal(bet_choice, from_anchor<BetType>(bet_state.betChoice));
+  });
+
 
 });

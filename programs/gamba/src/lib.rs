@@ -18,7 +18,6 @@ declare_id!("HaSj7pdndQD9DepFmPrcyL7exQ1BDUfr1qG4Uaxypfa9");
 
 
 
-
 #[program]
 pub mod gamba {
 
