@@ -35,7 +35,6 @@ pub struct MakeBet<'info> {
 }
 
 pub fn handler(ctx: Context<MakeBet>, _bet_bump: u8, _gamba_bump:u8, _epoch_bump: u8, epoch: u32, user: Pubkey, bet_type: BetType, bet_choice: BetChoice, lamports: u32) -> ProgramResult {
-    msg!("before gamba load");
     let gamba_account = ctx.accounts.gamba_account.load()?;
     let bet_account = &mut ctx.accounts.bet_account;
 
@@ -44,17 +43,13 @@ pub fn handler(ctx: Context<MakeBet>, _bet_bump: u8, _gamba_bump:u8, _epoch_bump
     if gamba_account.current_open_epoch != epoch {
         return Err(ErrorCode::BadEpoch.into());
     }
-    msg!("after epoch check");
 
     bet_account.user = user;
     bet_account.lamports = lamports;
     bet_account.bet_type = bet_type;
     bet_account.bet_choice = bet_choice;
 
-    msg!("before register");
-
     epoch_account.bets_mut().register(&ctx.accounts.bet_account.key())?;
 
-    msg!("after register");
     Ok(())
 }
